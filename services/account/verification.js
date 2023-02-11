@@ -8,8 +8,6 @@ const fs = require('fs'),
     {exportFile, webEvent, osCommand} = require("../../utilities/commons"),
     {createCipheriv, genRandomBytes} = require("../../utilities/hash");
 
-if (!fs.existsSync(co.__dirname + '/upload/')) fs.mkdirSync(co.__dirname + '/upload/');
-
 router[w.verification] = async (id, c, json, callback, {res, ip}) => {
     const {l, buffer, t} = json;
     if (!l || !t || (t < 1 || t > 3) || !buffer.length || !(buffer[0] instanceof Uint8Array) || !res) throw w.IMPOSSIBLE_OPERATION;
