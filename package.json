@@ -1,0 +1,22 @@
+{
+  "name": "back",
+  "version": "1.0.0",
+  "private": false,
+  "main": "index.js",
+  "scripts": {
+    "dev": "node hot-reload.js",
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "async": "^3.2.0",
+    "bitcoin-address-validation": "^2.2.1",
+    "bitcoinjs-lib": "^6.1.0-rc.0",
+    "bluebird": "^3.5.4",
+    "mongodb": "^3.2.2",
+    "redis": "^3.1.2",
+    "speakeasy": "^2.0.0",
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.15.0",
+    "ws": "^8.2.2",
+    "zeromq": "^5.3.0"
+  }
+}
