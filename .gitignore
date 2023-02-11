@@ -1,9 +1,10 @@
 node_modules
 .idea
-errors
+errors/*
 !errors/.keep
-public
+public/*
 !public/.keep
-upload
+!public/maintenance.html
+upload/*
 !upload/.keep
 secrets.json
