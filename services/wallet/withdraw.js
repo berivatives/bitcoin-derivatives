@@ -118,9 +118,10 @@ router['c-' + w.withdraw] = async (id, c, json, callback) => {
     await takeLockAsync(c + id + w.withdraw);
     const token = genRandomString(32);
     await redis[w.minus + c][w.setAsync](w.withdraw + token, id);
-    const email = await redis[c][w.hgetAsync](id + w.map, w.email);
+    let [email, pgp] = await redis[c][w.hmgetAsync](id + w.map, w.email, w.pgp);
+    if (pgp === w.true) ({pgp} = await mongo[c].collection(w.users).findOne({[w.mongoId]: ObjectId(id)}));
     await redis[w.minus + c][w.lpushAsync](w.email, JSON.stringify({
-        to: email, subject: "Withdraw request",
+        to: email, subject: "Withdraw request", pgp,
         html: '<p>Hello,<br/> your token to withdraw is:<b>' + token + '</b></p>'
     }));
     callback(false, w.EMAIL_SENT);
