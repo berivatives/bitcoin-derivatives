@@ -1,5 +1,4 @@
 const {ObjectId} = require('mongodb'),
-    {readKey} = require('openpgp'),
     redis = require('../../redis'),
     mongo = require('../../mongo'),
     w = require('../../words'),
@@ -16,8 +15,7 @@ router[w.pgp] = async (id, c, json, callback) => {
         const user = await mongo[c].collection(w.users).findOne({[w.mongoId]: ObjectId(id)});
         return callback(false, user[w.pgp]);
     } else if (t === w.set) {
-        console.log(key);
-        await readKey({armoredKey: key});
+        if (key.length > 10000) throw w.IMPOSSIBLE_OPERATION;
         await redis[c][w.hsetAsync](id + w.map, w.pgp, w.true);
         await updateKey(id, c, key);
     } else {
