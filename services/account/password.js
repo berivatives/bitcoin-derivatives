@@ -35,11 +35,10 @@ router['f-' + w.password] = async (id, c, json, callback, args) => {
     c = getCluster(email);
     const user = await mongo[c].collection(w.users).findOne({email});
     if (!user) throw w.UNKNOWN_ACCOUNT;
-    const token = c + genRandomString(32);
-    const key = genRandomString(10);
+    const token = c + genRandomString(32), key = genRandomString(10);
     await redis[w.minus + c][w.setAsync](w.password + token, JSON.stringify({id: user[w.mongoId], c, key}));
     await redis[w.minus + c][w.lpushAsync](w.email, JSON.stringify({
-        to: email, subject: "Reset password",
+        to: email, subject: "Reset password", pgp: user.pgp,
         html: '<p>Hello,<br/> your token to reset your password is:<b>' + token + '</b></p>'
     }));
     callback(false, key);

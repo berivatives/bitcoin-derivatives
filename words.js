@@ -291,4 +291,5 @@ module.exports = {
     loadFiles: 'loadFiles',
     cache: 'cache',
     verification: 've',
+    pgp: 'pgp',
 };
