@@ -26,7 +26,7 @@ const {httpGet, query} = require("./utilities");
     strictEqual(error, true);
     strictEqual(data, w.IMPOSSIBLE_OPERATION);
 
-    for (const a of [w.users, w.withdrawLogs, w.email, w.addresses]) {
+    for (const a of [w.users, w.withdrawLogs, w.addresses, w.verification, w.deposits]) {
         ({error, data} = await httpGet('/administration' + query({a, page: 1, items: 20}), session));
         strictEqual(error, false);
         strictEqual(Array.isArray(data.documents), true);

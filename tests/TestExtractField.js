@@ -1,4 +1,4 @@
-const {strictEqual} = require('assert');
+const assert = require('assert');
 const w = require('../words');
 const {extractField} = require("../services/trading/utilities");
 

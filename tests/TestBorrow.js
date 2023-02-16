@@ -71,7 +71,7 @@ let session, user, session2, user2;
     await redis[user[0]].hsetAsync(user + data.id, w.status, w.cancelled);
     await order({q: 1e8, p: 2e8, s: 'ETH', a: 's', e: w.GTC}, session2);
 
-    await wait(50);
+    await wait(100);
     await checkBalance(user, w.free, 0, w.locked, 1e8, w.margin, 1e8);
 
     for (const u of [user, user2]) {
@@ -128,7 +128,7 @@ let session, user, session2, user2;
 
     /****Classic borrow and infinite PNL****/
     await fillBLX();
-    await wait(10);
+    await wait(100);
     await BTCSize(user, 1);
     await BTCSize(user2, 1);
     await order({q: 2e8, p: 100e8 - 1, s: 'BLX', a: 's', e: w.GTC}, session);

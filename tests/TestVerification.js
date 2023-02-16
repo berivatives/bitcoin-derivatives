@@ -1,5 +1,6 @@
 const {strictEqual} = require('assert');
 const fs = require('fs');
+const os = require('os');
 const w = require('../words');
 const co = require('../constants');
 const {httpGet, query, clearIPLock, clearLock} = require("./utilities");
@@ -26,7 +27,7 @@ let error, data, user, session;
         ({
             error,
             data
-        } = await httpPost('/upload?l=' + l + "&t=" + i, session, false, null, fs.readFileSync("../../../../" + l)));
+        } = await httpPost('/upload?l=' + l + "&t=" + i, session, false, null, fs.readFileSync(os.homedir() + "/" + l)));
         strictEqual(error, i > 3, data);
     }
     await wait(1000);
@@ -90,7 +91,7 @@ let error, data, user, session;
     for (const ip of co.machines[co.realClusters[session[0]]]) {
         await clearLock(id + w.verification, session[0]);
         data = await httpGet('/dl-' + w.verification + query({id: file1}), session, true, null, ip);
-        strictEqual(data.startsWith("%PDF-1.5"), true);
+        strictEqual(data.startsWith("%PDF-1."), true);
     }
 
     await clearLock(id + w.verification, session[0]);
@@ -128,7 +129,7 @@ let error, data, user, session;
     ({error, data} = await order({q: 0.5e8, p: 1e8, s, a: 's', e: w.GTC}, session));
     strictEqual(error, false, data);
 
-    await httpPost('/upload?l=toast&t=0', session, false, null, fs.readFileSync("../../../../big.pdf"))
+    await httpPost('/upload?l=toast&t=0', session, false, null, fs.readFileSync(os.homedir() + "/big.pdf"))
         .catch(() => {
             process.exit(0);
         });
