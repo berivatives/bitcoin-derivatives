@@ -26,7 +26,8 @@ const {MongoClient} = require('mongodb'),
 async function checkIndex(db, collection, prop) {
     const exist = await db.listCollections({name: collection}).toArray();
     if (!exist.length) await db.createCollection(collection);
-    if ((await db.collection(collection).indexes()).length < 2) {
+    const indexes = await db.collection(collection).indexes();
+    if (!indexes.filter(({key}) => key[prop] !== undefined).length) {
         await db.collection(collection).insertOne({[prop]: "test"});
         await db.createIndex(collection, prop, {unique: true});
     }

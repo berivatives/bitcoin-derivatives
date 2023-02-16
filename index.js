@@ -162,12 +162,12 @@ if (cluster.isMaster) {
         });
         const method = req.getMethod().toLowerCase(),
             url = req.getUrl().substring(1),
+            query = querystring.parse(req.getQuery()),
             origin = req.getHeader('origin');
 
         req.country = req.getHeader('cf-ipcountry');
         req.cookie = req.getHeader('cookie');
         req.ip = req.getHeader('cf-connecting-ip');
-        req.query = req.getQuery();
 
         if (method === 'options') {
             answer(req, res, origin, false);
@@ -178,7 +178,7 @@ if (cluster.isMaster) {
                 byteLength += chunk.byteLength;
                 if (byteLength < co.maxSize) buffer.push(new Uint8Array(chunk.slice(0)));
                 else return res.close();
-                if (isLast) handleRequest(req, res, method, w.verification, origin, {buffer, ...querystring.parse(req['query'])});
+                if (isLast) handleRequest(req, res, method, w.verification, origin, {buffer, ...query});
             });
             res.onAborted(() => {
                 res.aborted = true;
@@ -186,14 +186,14 @@ if (cluster.isMaster) {
             });
         } else if (method === 'post' || method === 'put') {
             readJson(res, async (obj) => {
-                await handleRequest(req, res, method, url, origin, obj);
+                await handleRequest(req, res, method, url, origin, {...obj, ...query});
             }, () => {
             });
         } else {
             if (!router[url]) {
                 sendFile(res, path.basename(req.getUrl()).split('?')[0] || (co[w.maintenance] ? "maintenance.html" : "index.html"));
             } else {
-                await handleRequest(req, res, method, url, origin, querystring.parse(req.getQuery()));
+                await handleRequest(req, res, method, url, origin, query);
             }
         }
     }).listen(8000, (listenSocket) => {
