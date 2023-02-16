@@ -4,7 +4,7 @@ const redis = require('../../redis'),
     w = require('../../words'),
     router = require('../../router'),
     {takeLockAsync} = require("../../utilities/lock"),
-    {getCluster, getRights, webEvent} = require("../../utilities/commons"),
+    {getCluster, getRights, webEvent, validateEmail} = require("../../utilities/commons"),
     {genRandomString} = require("../../utilities/hash");
 
 router[w.subAccount] = async (id, c, json, callback) => {
@@ -14,20 +14,22 @@ router[w.subAccount] = async (id, c, json, callback) => {
 
 router[w.updateSubAccount] = async (id, c, json, callback) => {
     await takeLockAsync(c + id + w.updateSubAccount);
-    const subAccount = JSON.parse(await redis[c][w.hgetAsync](id + w.subAccount, json[w.email]));
+    const {email} = json;
+    if (!validateEmail(email)) throw w.UNKNOWN_ACCOUNT;
+    const subAccount = JSON.parse(await redis[c][w.hgetAsync](id + w.subAccount, email));
     if (!subAccount) throw w.UNKNOWN_ACCOUNT;
 
     subAccount[w.disabled] = json[w.disabled] === true;
     subAccount[w.right] = getRights(json);
 
-    const sac = getCluster(json[w.email]);
+    const sac = getCluster(email);
 
-    await mongo[sac].collection(w.users).updateOne({[w.email]: json[w.email]}, {$set: {[w.disabled]: subAccount[w.disabled]}});
+    await mongo[sac].collection(w.users).updateOne({email}, {$set: {[w.disabled]: subAccount[w.disabled]}});
     await redis[sac][w.hsetAsync](subAccount[w.id], w.right, JSON.stringify(subAccount[w.right]));
 
-    await redis[c][w.hsetAsync](id + w.subAccount, json[w.email], JSON.stringify(subAccount));
+    await redis[c][w.hsetAsync](id + w.subAccount, email, JSON.stringify(subAccount));
 
-    subAccount[w.email] = json[w.email];
+    subAccount[w.email] = email;
     webEvent({[w.subAccount]: subAccount}, id, c);
 
     callback(false);

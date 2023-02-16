@@ -133,10 +133,10 @@ const prepareExport = function (req, res, fileName, extension, origin) {
 };
 exports.prepareExport = prepareExport;
 
-exports.exportFile = function (req, res, fileId, fileName, origin,callback) {
+exports.exportFile = function (req, res, fileId, fileName, origin, callback) {
     prepareExport(req, res, fileName, fileName.substring(fileName.indexOf('.')), origin);
     // res.write(decryptFile(fs.readFileSync(co.__dirname + '/upload/' + fileId), fileId));
-    download(res, decryptFile(fs.readFileSync(co.__dirname + '/upload/' + fileId), fileId),callback);
+    download(res, decryptFile(fs.readFileSync(co.__dirname + '/upload/' + fileId), fileId), callback);
 };
 
 exports.webEvent = function (msg, id, c) {
@@ -203,3 +203,9 @@ const crc = function (str) {
 };
 
 exports.crc = crc;
+
+exports.validateEmail = function (email) {
+    // noinspection RegExpRedundantEscape
+    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+};

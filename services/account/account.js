@@ -3,7 +3,7 @@ const mongo = require('../../mongo'),
     speakeasy = require('speakeasy'),
     w = require('../../words'),
     router = require('../../router'),
-    {getCluster, getRights, webEvent} = require('../../utilities/commons'),
+    {getCluster, getRights, webEvent, validateEmail} = require('../../utilities/commons'),
     {getSessionCookie, isConnected} = require('../../utilities/checkClient'),
     {genRandomString, securedPassword, verifyPassword, saltHashPassword, decrypt} = require("../../utilities/hash"),
     {takeLockAsync} = require("../../utilities/lock");
@@ -84,7 +84,7 @@ router['signin'] = async (id, c, json, callback, args) => {
     const {email, password, token} = json;
     if (!email) throw w.INVALID_EMAIL;
     const user = await mongo[getCluster(email)].collection(w.users).findOne({email});
-    if (!user) throw w.INVALID_EMAIL;
+    if (!user || user[w.email] !== email) throw w.INVALID_EMAIL;
     if (!verifyPassword(user['passwordHash'], "" + password, "" + user.salt)) throw w.INVALID_PASSWORD;
     if (user[w.key] && !speakeasy.totp['verifyDelta']({
         secret: decrypt(user[w.tfa], Buffer.from(user[w.key], 'hex'), user[w.tfa + 'iv']),
@@ -109,12 +109,6 @@ router['logout'] = async (id, c, json, callback, args) => {
 
 function isRestCall(args) {
     if (!args.res || restricted.includes(args.req.country)) throw w.IMPOSSIBLE_OPERATION;
-}
-
-function validateEmail(email) {
-    // noinspection RegExpRedundantEscape
-    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(String(email).toLowerCase());
 }
 
 async function generateCookie(id, c, callback, args) {

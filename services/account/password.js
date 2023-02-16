@@ -3,7 +3,7 @@ const {ObjectId} = require('mongodb'),
     redis = require('../../redis'),
     router = require('../../router'),
     w = require('../../words'),
-    {getCluster} = require('../../utilities/commons'),
+    {getCluster, validateEmail} = require('../../utilities/commons'),
     {genRandomString, securedPassword, verifyPassword, saltHashPassword} = require("../../utilities/hash"),
     {takeLockAsync} = require("../../utilities/lock");
 
@@ -31,7 +31,7 @@ router['r-' + w.password] = async (id, c, json, callback) => {
 router['f-' + w.password] = async (id, c, json, callback, args) => {
     await takeLockAsync(getCluster(args.ip));
     const {email} = json;
-    if (!email) throw w.UNKNOWN_ACCOUNT;
+    if (!email || !validateEmail(email)) throw w.UNKNOWN_ACCOUNT;
     c = getCluster(email);
     const user = await mongo[c].collection(w.users).findOne({email});
     if (!user) throw w.UNKNOWN_ACCOUNT;
