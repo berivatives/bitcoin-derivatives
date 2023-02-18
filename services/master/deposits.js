@@ -1,6 +1,7 @@
 const Redis = require('redis'),
     bitcoin = require('bitcoinjs-lib'),
     zmq = require('zeromq'),
+    {ObjectId} = require('mongodb'),
     co = require('../../constants'),
     w = require('../../words'),
     mongo = require('../../mongo'),
@@ -116,6 +117,13 @@ async function addDeposit(txId) {
             const qty = Math.round(amount * co.satoshi);
             const balanceMsg = [now, "Bitcoin deposit", qty, txId];
             await saveDeposit(id, c, txId, qty, balanceMsg, address);
+            const user = await mongo[c].collection(w.users).findOne({[w.mongoId]: ObjectId(id)});
+            if (!user) return;
+            const {email, pgp} = user;
+            await redis[w.minus + c][w.lpushAsync](w.email, JSON.stringify({
+                to: email, subject: "Deposit", pgp,
+                html: '<p>Hello,<br/>Your bitcoin deposit of <b>' + amount + '</b> has been credited to your account.<br/>Transaction ID (TxID):' + txId + '<br/>Regards</p>'
+            }));
         }
     } catch (e) {
         console.log(e);
