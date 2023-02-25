@@ -12,7 +12,7 @@ map.feesMaker = -0.04 / 100;
 map.feesTaker = 0.05 / 100;
 map.minimalFundingSAT = 0.005 * map.satoshi;
 map.minimalOrderSAT = 0.00005 * map.satoshi;
-map.minimalWithdrawSAT = 0.0005 * map.satoshi;
+map.minimalWithdrawSAT = 0.00025 * map.satoshi;
 map.maxOrders = 10000;
 map.clusters = '0123456789';
 
