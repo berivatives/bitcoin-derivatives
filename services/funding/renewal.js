@@ -19,7 +19,7 @@ router[w.stopRenewal] = async (id, c, json, callback) => {
 
     commands.length = 0;
 
-    orders && orders.forEach((order, i) => {
+    orders?.forEach((order, i) => {
         if (isRenewable(order)) commands.push([w.hset, id + ordersSet[i], w.renew, w.false]);
     });
 
