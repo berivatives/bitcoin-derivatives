@@ -1,6 +1,7 @@
-const mongo = require('../../mongo'),
-    redis = require('../../redis'),
+const {ObjectId} = require('mongodb'),
     speakeasy = require('speakeasy'),
+    mongo = require('../../mongo'),
+    redis = require('../../redis'),
     w = require('../../words'),
     router = require('../../router'),
     {getCluster, getRights, webEvent, validateEmail} = require('../../utilities/commons'),
@@ -30,7 +31,7 @@ router['signup'] = async (id, c, json, callback, args) => {
     const {ip} = args;
     await takeLockAsync(getCluster(ip) + ip);
 
-    let {email, password, subAccount} = json;
+    let {email, password, subAccount, referral} = json;
     if (email) email = email.toLowerCase();
     if (!email || !validateEmail(email) || email.length > 100) throw w.INVALID_EMAIL;
     securedPassword(password);
@@ -46,9 +47,16 @@ router['signup'] = async (id, c, json, callback, args) => {
         ...saltHashPassword("" + password)
     };
 
+    if (referral) {
+        const [referralId, referralCluster] = referral.split('_');
+        const referralUser = await mongo[referralCluster].collection(w.users).findOne({[w.mongoId]: ObjectId(referralId)});
+        if (!referralUser || !referralUser[w.referral]) throw w.UNAUTHORIZED_OPERATION;
+    }
+
     if (subAccount && id) {
         if (await redis[mainAccountCluster][w.hgetAsync](id, w.subAccount)) throw w.UNAUTHORIZED_OPERATION;
         doc[w.subAccount] = id;
+        delete doc[w.referral];
     }
 
     await mongo[c].collection(w.users).insertOne(doc, async function (err, result) {
@@ -68,6 +76,7 @@ router['signup'] = async (id, c, json, callback, args) => {
                 subAccount[w.email] = email;
                 webEvent({[w.subAccount]: subAccount}, id, c);
             } else {
+                if (referral) await redis[c][w.hsetAsync](doc[w.mongoId], w.referral, referral);
                 await redis[c][w.hsetAsync](doc[w.mongoId] + w.map, w.email, email);
                 await generateCookie(doc[w.mongoId], c, callback, args);
             }

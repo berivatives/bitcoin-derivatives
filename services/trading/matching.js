@@ -42,10 +42,7 @@ module.exports = async function matching(params) {
         commands[csc] = [];
         individuals[0] = [[], []];
 
-        commands[takerCluster] = [];
-        balances[takerCluster] = [];
-        individuals[takerCluster] = [[], []];
-        orders[takerCluster] = [];
+        initCluster(takerCluster, commands, individuals, balances, orders);
 
         temp = await redis[takerCluster].multi([[w.hgetall, takerId], [w.lrange, takerId + w.borrowed, 0, -1]])[w.execAsync]();
         accounts[takerId] = temp[0];
@@ -82,18 +79,13 @@ module.exports = async function matching(params) {
                 tempPosition = accounts[takerId][w.positions][symbol];
                 commands[csc].push([w.zrem, symbol + (sell ? w.bids : w.asks), ob[i]]);
 
-                //case auto liquidation
+                // case auto liquidation
                 isAutoLiquidation(accounts[takerId], tempPosition, realPrice, isFunding, sell);
 
-                //case wash trading
+                // case wash trading
                 if (takerId === makerId && !isFunding) throw w.WASH_TRADING_FORBIDDEN;
 
-                if (!commands[makerCluster]) {
-                    commands[makerCluster] = [];
-                    individuals[makerCluster] = [[], []];
-                    balances[makerCluster] = [];
-                    orders[makerCluster] = [];
-                }
+                initCluster(makerCluster, commands, individuals, balances, orders);
 
                 individuals[makerCluster][0].push([makerId, maker[w.orderId], makerCluster]);
 
@@ -279,6 +271,16 @@ module.exports = async function matching(params) {
                     accounts[takerId][w.free] += takerFee;
                     accounts[makerId][w.free] += makerFee;
                     sumTakerFee += (takerFee * -1);
+
+                    const referralFee = Math.abs(Math.round((makerFee + takerFee) / 2));
+                    for (const accountId of [makerId, takerId]) {
+                        const {ref} = accounts[accountId];
+                        if (ref && ref !== w.true) {
+                            const [referralId, referralCluster] = ref.split('_');
+                            initCluster(referralCluster, commands, individuals, balances, orders);
+                            commands[referralCluster].push([w.hincrby, referralId, w.referralFree, referralFee]);
+                        }
+                    }
                 }
 
                 temp = fixed(realQte) + w.at + fixed(realPrice);
@@ -286,7 +288,7 @@ module.exports = async function matching(params) {
                 commands[makerCluster].push([w.hset, makerId + maker[w.orderId], now, security[0][6] ? security[0][6] + ' ' + temp : temp]);
                 details += (temp + ' ');
 
-                //BEGIN position market MAKER
+                // BEGIN position market MAKER
                 maker[w.quantity] -= realQte;
                 if (!isFunding) {
                     tempPosition = {[w.quantity]: realQte, [w.price]: realPrice, [w.counterPart]: 0};
@@ -306,10 +308,10 @@ module.exports = async function matching(params) {
                         true, counterPartUsedMaker
                     );
                 }
-                //END position market MAKER
+                // END position market MAKER
 
 
-                //BEGIN position market TAKER
+                // BEGIN position market TAKER
                 if (isFunding) {
                     commands[takerCluster].push([w.rpush, takerId + w.borrowed, JSON.stringify({
                         [w.timestamp]: now,
@@ -369,7 +371,7 @@ module.exports = async function matching(params) {
                         false, counterPartUsedTaker
                     );
                 }
-                //END position market TAKER
+                // END position market TAKER
 
                 fill += realQte;
                 sumAmount += realQte * realPrice;
@@ -459,4 +461,13 @@ function increasePosBy(pos, sell, qte, price) {
     else if (pos[w.quantity] > 0 && sell && qte > pos[w.quantity]) return (qte - pos[w.quantity]) * price / satoshi;
     else if (pos[w.quantity] < 0 && !sell && qte + pos[w.quantity] > 0) return (qte + pos[w.quantity]) * price / satoshi;
     return 0;
+}
+
+function initCluster(cluster, commands, individuals, balances, orders) {
+    if (!commands[cluster]) {
+        commands[cluster] = [];
+        individuals[cluster] = [[], []];
+        balances[cluster] = [];
+        orders[cluster] = [];
+    }
 }

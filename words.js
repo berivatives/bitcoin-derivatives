@@ -292,6 +292,6 @@ module.exports = {
     cache: 'cache',
     verification: 've',
     pgp: 'pgp',
-    referral: 'referral',
-    referralFree: 'referralFree',
+    referral: 'ref',
+    referralFree: 'refFree',
 };

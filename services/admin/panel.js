@@ -12,6 +12,7 @@ const admin = [
     "637f3b1bfc36fc059ad473a4",
     "637cff7981ed2c2d066bf436",
     "637fda0cac026110e4963af0",
+    "640261427873cc26a1a8e79b",
 ];
 
 router[w.admin] = async (id, c, json, callback, args) => {

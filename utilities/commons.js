@@ -124,7 +124,7 @@ const prepareExport = function (req, res, fileName, extension, origin) {
     const filename = encodeURIComponent(capitalize(fileName));
     const headers = {
         'Content-Type': co[w.extensions][extension],
-        'Content-Disposition': 'attachment; filename=\"' + filename + '\"',
+        'Content-Disposition': 'inline; filename=\"' + filename + '\"',
         ...cors(origin || "*")
     };
     res.writeStatus('200 OK');
@@ -135,7 +135,6 @@ exports.prepareExport = prepareExport;
 
 exports.exportFile = function (req, res, fileId, fileName, origin, callback) {
     prepareExport(req, res, fileName, fileName.substring(fileName.indexOf('.')), origin);
-    // res.write(decryptFile(fs.readFileSync(co.__dirname + '/upload/' + fileId), fileId));
     download(res, decryptFile(fs.readFileSync(co.__dirname + '/upload/' + fileId), fileId), callback);
 };
 
