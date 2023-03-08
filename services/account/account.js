@@ -56,7 +56,6 @@ router['signup'] = async (id, c, json, callback, args) => {
     if (subAccount && id) {
         if (await redis[mainAccountCluster][w.hgetAsync](id, w.subAccount)) throw w.UNAUTHORIZED_OPERATION;
         doc[w.subAccount] = id;
-        delete doc[w.referral];
     }
 
     await mongo[c].collection(w.users).insertOne(doc, async function (err, result) {

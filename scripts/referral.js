@@ -6,11 +6,10 @@ const redis = require('../redis'),
 if (process.argv.length !== 3) {
     console.log(process.argv);
     console.log("argv problem need an email");
-    // process.exit(-1);
+    process.exit(-1);
 }
 
-// const email = process.argv[2];
-const email = "1676558323329@mail.com";
+const email = process.argv[2];
 
 (async () => {
     await wait(1000);

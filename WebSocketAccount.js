@@ -161,8 +161,10 @@ async function snapshot(id, c, ws) {
 
         if (commands.length) redis[c].multi(commands)[w.exec]();
 
+        if (message[w.referral] === w.true) message[w.referral] = id + "_" + c;
+        else delete message[w.referral];
+
         if (!co.isDev) {
-            if (replies[indexes[w.map]][w.referral] === w.true) replies[indexes[w.map]][w.referral] = id + "_" + c;
             delete message[w.id];
             delete message[w.cluster];
             for (let key in message) {
