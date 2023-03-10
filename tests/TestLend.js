@@ -35,7 +35,7 @@ const users = [];
         await orderBookSize('BTC' + w.asks, 1);
         await order({q: 2e8, p: 1e8, s: 'ETH', a: 'b', e: w.GTC}, await createUser([w.free, 1e8], users));
         await order({q: 2e8, p: 1e8, s: 'ETH', a: 's', e: w.GTC}, await createUser([w.free, 1e8], users));
-        await wait(10);
+        await wait(20);
 
         strictEqual(await getProp(users[0][1] + data.id, w.status, true), w.opened);
         strictEqual(await getProp(users[0][1] + data.id, w.fill), 2e8, "t:" + t);

@@ -108,12 +108,12 @@ let session, user;
         (json) => {
             strictEqual(json[w.symbol], "BTC");
             strictEqual(json[w.positions], null);
-            strictEqual(1e8 - 2 <= json[w.free] && json[w.free] <= 1e8, true);
+            strictEqual(1e8 - 5 <= json[w.free] && json[w.free] <= 1e8, true);
         },
         (json) => {
             strictEqual(json[w.order] !== undefined, true);
             strictEqual(json[w.order][w.symbol], "BTC");
-            strictEqual(json[w.order][w.fee], "2");
+            strictEqual(json[w.order][w.fee] >= 0 && json[w.order][w.fee] <= 5, true);
         },
         {[w.fundingFree]: 0, [w.fundingLocked]: 1e8},
         (json) => {

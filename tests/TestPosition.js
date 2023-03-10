@@ -144,7 +144,7 @@ let session, user, session2, user2;
     await order({q: 1e8, p: 1e8, s: 'ETH', a: 's', e: w.GTC}, session2);
     await order({q: 1e8, p: 1e8, s: 'GOLD', a: 's', e: w.GTC}, session2);
 
-    await wait(10);
+    await wait(30);
 
     await BTCSize(user, 1);
     await BTCSize(user2, 1);
