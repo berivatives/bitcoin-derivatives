@@ -122,7 +122,7 @@ async function addDeposit(txId) {
             const {email, pgp} = user;
             await redis[w.minus + c][w.lpushAsync](w.email, JSON.stringify({
                 to: email, subject: "Deposit", pgp,
-                html: '<p>Hello,<br/>Your bitcoin deposit of <b>' + amount + '</b> has been credited to your account.<br/>Transaction ID (TxID):' + txId + '<br/>Regards</p>'
+                html: '<p>Hello,<br/><br/>Your bitcoin deposit of <b>' + amount + '</b> has been credited to your account.<br/><br/>Transaction ID (TxID):' + txId + '<br/><br/>Regards</p>'
             }));
         }
     } catch (e) {

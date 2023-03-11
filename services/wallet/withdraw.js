@@ -122,7 +122,7 @@ router['c-' + w.withdraw] = async (id, c, json, callback) => {
     if (pgp === w.true) ({pgp} = await mongo[c].collection(w.users).findOne({[w.mongoId]: ObjectId(id)}));
     await redis[w.minus + c][w.lpushAsync](w.email, JSON.stringify({
         to: email, subject: "Withdraw request", pgp,
-        html: '<p>Hello,<br/> your token to withdraw is:<b>' + token + '</b></p>'
+        html: '<p>Hello,<br/><br/>Your token to withdraw is: <b>' + token + '</b></p>'
     }));
     callback(false, w.EMAIL_SENT);
 };

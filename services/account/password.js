@@ -39,7 +39,7 @@ router['f-' + w.password] = async (id, c, json, callback, args) => {
     await redis[w.minus + c][w.setAsync](w.password + token, JSON.stringify({id: user[w.mongoId], c, key}));
     await redis[w.minus + c][w.lpushAsync](w.email, JSON.stringify({
         to: email, subject: "Reset password", pgp: user.pgp,
-        html: '<p>Hello,<br/> your token to reset your password is:<b>' + token + '</b></p>'
+        html: '<p>Hello,<br/><br/>Your token to reset your password is: <b>' + token + '</b></p>'
     }));
     callback(false, key);
 };
