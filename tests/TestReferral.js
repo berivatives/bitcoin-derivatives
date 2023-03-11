@@ -7,7 +7,7 @@ const redis = require("../redis");
 const mongo = require("../mongo");
 const {clearIPLock} = require("./utilities");
 const {checkBalance} = require("./utilities");
-const {publish, getCluster} = require("../utilities/commons");
+const {osCommand, publish, getCluster} = require("../utilities/commons");
 const {httpGet, query, createUser, getProp, order} = require("./utilities");
 
 let error, data, session, user, session2, user2, cluster;
@@ -22,7 +22,9 @@ let error, data, session, user, session2, user2, cluster;
     ({error} = await httpGet('/signup' + query({email, password})));
     strictEqual(error, false);
     cluster = getCluster(email);
-    const {value} = await mongo[cluster].collection(w.users).findOneAndUpdate({email}, {$set: {[w.referral]: true}}, {returnDocument: "after"});
+    await osCommand("node", ["../scripts/referral", email]);
+    const value = await mongo[cluster].collection(w.users).findOne({email});
+    strictEqual(value[w.referral], true);
     await clearIPLock();
     ({error, data} = await httpGet('/signup' + query({
         email: Date.now() + "@mail.com",

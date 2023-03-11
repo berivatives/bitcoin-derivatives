@@ -4,7 +4,7 @@ const {satoshi} = require('../../constants'),
 exports.initAccount = function (account, maker, sell, symbol, now, c) {
 
     account[w.cluster] = c;
-    const toInit = [w.free, w.locked, w.fundingFree, w.fundingLocked, w.margin];
+    const toInit = [w.free, w.locked, w.fundingFree, w.fundingLocked, w.margin, w.referralFree];
     if (symbol) {
         toInit.push(symbol + w.sellUsed);
         toInit.push(symbol + w.buyUsed);
