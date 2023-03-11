@@ -23,7 +23,7 @@ async function tests() {
     const commitHash = await osCommand("git", ["rev-parse", "HEAD"]);
     for (let c in machines) {
         for (const ip of machines[c]) {
-            const {code} = await osCommand("ssh", [ip, "cd $HOME/back; node scripts/maintenance.js; git pull; sudo systemctl restart nodejs-daemon.service;"]);
+            const {code} = await osCommand("ssh", [ip, "cd $HOME/back; node scripts/maintenance.js; git pull; npm i; sudo systemctl restart nodejs-daemon.service;"]);
             const {result} = await osCommand("ssh", [ip, "cd $HOME/back; git rev-parse HEAD;"]);
             strictEqual(code, 0);
             strictEqual(result, commitHash.result);
