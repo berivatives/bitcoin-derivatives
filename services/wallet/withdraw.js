@@ -1,5 +1,6 @@
 const {validate} = require('bitcoin-address-validation'),
     {strictEqual} = require('assert'),
+    {ObjectId} = require('mongodb'),
     redis = require('../../redis'),
     mongo = require('../../mongo'),
     router = require('../../router'),
