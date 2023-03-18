@@ -133,8 +133,8 @@ async function snapshot(id, c, ws) {
         if (!commands.length && !message[w.positions][w.BTC] && message[w.margin] > 0) {
             commands.push([w.hset, id, w.margin, 0]);
             message[w.margin] = 0;
-            dailyCheck(id, c, message, commands, now);
         }
+        dailyCheck(id, c, message, now);
 
         if (commands.length) replies = await redis[c].multi(commands).execAsync();
         commands.length = 0;
@@ -189,13 +189,14 @@ async function snapshot(id, c, ws) {
 
 }
 
-function dailyCheck(id, c, data, commands, now) {
+function dailyCheck(id, c, data, now) {
     if (!data[w.dailyCheck] || ((Number(data[w.dailyCheck]) + 60 * 60 * 24 * 1000) < now)) {
+        const commands = [];
         commands.push([w.hset, id + w.map, w.dailyCheck, now]);
         commands.push([w.hset, id, w.counter + w.order, 0]);
         commands.push([w.hset, id, w.counter + w.withdraw, 0]);
+        redis[c].multi(commands)[w.exec]();
     }
-    if (commands.length) redis[c].multi(commands)[w.exec]();
 }
 
 const heartbeat = JSON.stringify({hb: 1});
