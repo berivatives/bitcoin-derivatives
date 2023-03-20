@@ -32,8 +32,8 @@ router['signup'] = async (id, c, json, callback, args) => {
     await takeLockAsync(getCluster(ip) + ip);
 
     let {email, password, subAccount, referral} = json;
-    if (email) email = email.toLowerCase();
     if (!email || !validateEmail(email) || email.length > 100) throw w.INVALID_EMAIL;
+    email = email.toLowerCase();
     securedPassword(password);
 
     if (email === password) throw w.ARE_U_SERIOUS;
@@ -89,8 +89,9 @@ router['signin'] = async (id, c, json, callback, args) => {
     isRestCall(args);
     const {ip} = args;
     await takeLockAsync(getCluster(ip) + ip);
-    const {email, password, token} = json;
+    let {email, password, token} = json;
     if (!email) throw w.INVALID_EMAIL;
+    email = email.toLowerCase();
     const user = await mongo[getCluster(email)].collection(w.users).findOne({email});
     if (!user || user[w.email] !== email) throw w.INVALID_EMAIL;
     if (!verifyPassword(user['passwordHash'], "" + password, "" + user.salt)) throw w.INVALID_PASSWORD;
