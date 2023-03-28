@@ -26,7 +26,6 @@ for (let c in co.redisClusters) {
             for (let i in workers) workers[i].send(msg);
             communicate(msg);
         } catch (e) {
-            console.log(e);
         }
     });
 
