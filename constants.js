@@ -15,6 +15,7 @@ map.minimalOrderSAT = 0.00005 * map.satoshi;
 map.minimalWithdrawSAT = 0.00025 * map.satoshi;
 map.maxOrders = 10000;
 map.clusters = '0123456789';
+map.cache = true;
 
 // local dev hot wallet
 map.bitcoinIP = "127.0.0.1";

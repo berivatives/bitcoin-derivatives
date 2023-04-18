@@ -94,7 +94,7 @@ if (cluster.isMaster) {
             res.writeStatus('404 Not Found').end(router[w.files]["404.html"]);
         } else {
             res.writeStatus('200 OK').writeHeader("Content-Type", co[w.extensions][path.extname(fileName)]);
-            download(res, router[w.files][fileName]);
+            download(res, co.cache ? router[w.files][fileName] : router[w.files][fileName]());
         }
     }
 

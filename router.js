@@ -1,5 +1,6 @@
 const fs = require('fs'),
     w = require('./words'),
+    c = require('./constants'),
     router = {};
 
 router[w.noUserCheck] = {};
@@ -7,12 +8,12 @@ router[w.files] = {};
 
 module.exports = router;
 
-function loadFiles(path, module) {
+function loadFiles(path, module, force) {
     try {
         const files = fs.readdirSync(path);
         for (let f of files) {
             if (fs.lstatSync(path + f).isDirectory()) {
-                loadFiles(path + f + "/", module);
+                loadFiles(path + f + "/", module, force);
             } else {
                 const data = fs.readFileSync(path + f);
                 if (module) {
@@ -22,7 +23,10 @@ function loadFiles(path, module) {
                     }
                 } else {
                     if (f === "index.html" && path.includes("unstable")) f = "unstable.html";
-                    if (!router[w.files][f]) router[w.files][f] = data;
+                    if (!router[w.files][f] || force) {
+                        if (c.cache) router[w.files][f] = data;
+                        else router[w.files][f] = () => fs.readFileSync(path + f);
+                    }
                 }
             }
         }
@@ -32,8 +36,5 @@ function loadFiles(path, module) {
 }
 
 loadFiles('services/', true);
-router[w.files][w.loadFiles] = () => {
-    router[w.files] = {};
-    loadFiles('public/');
-};
+router[w.files][w.loadFiles] = () => loadFiles('public/', false, true);
 router[w.files][w.loadFiles]();
