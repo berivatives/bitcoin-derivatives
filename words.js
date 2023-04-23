@@ -270,6 +270,7 @@ module.exports = {
     buyUsed: '_bu',
     noUserCheck: 'noUserCheck',
     errorBTC: 'errorBTC',
+    error: 'error',
     email: "email",
     mongoId: "_id",
     password: "pwd",

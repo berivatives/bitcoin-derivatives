@@ -16,7 +16,7 @@ const admin = [
 ];
 
 router[w.admin] = async (id, c, json, callback, args) => {
-    if (!admin.includes(id)) throw  w.UNAUTHORIZED_OPERATION;
+    if (!admin.includes(id)) throw w.UNAUTHORIZED_OPERATION;
 
     if (json[w.action] === "getUser") {
         await getUser(json, callback);
@@ -28,7 +28,7 @@ router[w.admin] = async (id, c, json, callback, args) => {
         await verifyFile(json, callback, args);
     } else if (json[w.action] === "verifyAccount") {
         await verifyAccount(json, callback, args);
-    } else if ([w.users, w.withdrawLogs, w.addresses, w.verification, w.deposits].includes(json[w.action])) {
+    } else if ([w.users, w.withdrawLogs, w.addresses, w.verification, w.deposits, w.error].includes(json[w.action])) {
         await getDocuments(json, json[w.action], callback);
     } else {
         throw w.IMPOSSIBLE_OPERATION;
