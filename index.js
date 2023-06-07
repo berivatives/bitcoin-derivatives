@@ -36,6 +36,13 @@ function init(isMaster) {
     });
 
     strictEqual(co[w.cluster] !== undefined, true);
+
+    if (!isMaster && !isNaN(parseInt(co[w.reboot]))) {
+        setTimeout(() => {
+            co[w.maintenance] = true;
+            setTimeout(() => process.exit(0), 10000);
+        }, co[w.reboot] * 1000)
+    }
 }
 
 if (cluster.isMaster) {
@@ -59,12 +66,13 @@ if (cluster.isMaster) {
         for (let i = 0; i < os.cpus().length && i < 4; i++) createWorker();
 
         cluster.on("exit", (deadWorker) => {
-            console.log(`worker ${deadWorker.process.pid} died`, new Date());
-            delete workers[deadWorker.process.pid];
+            const {pid, exitCode} = deadWorker.process;
+            exitCode && console.log(`worker ${pid} died`, new Date());
+            delete workers[pid];
             if (!co.isDev) {
                 setTimeout(function () {
                     createWorker();
-                }, 5000);
+                }, 1000);
             }
         });
     }

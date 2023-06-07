@@ -295,4 +295,5 @@ module.exports = {
     pgp: 'pgp',
     referral: 'ref',
     referralFree: 'refFree',
+    reboot: 'reboot',
 };
