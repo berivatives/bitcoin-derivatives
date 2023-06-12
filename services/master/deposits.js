@@ -112,7 +112,7 @@ async function addDeposit(txId) {
                 continue;
             }
 
-            await mongo[c].collection(w.deposits).insertOne({id, [w.data]: id + txId});
+            await mongo[c].collection(w.deposits).insertOne({id, [w.data]: id + txId, amount});
             delete unconfirmedTransactions[txId];
             const qty = Math.round(amount * co.satoshi);
             const balanceMsg = [now, "Bitcoin deposit", qty, txId];
