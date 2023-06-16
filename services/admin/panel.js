@@ -4,7 +4,7 @@ const {ObjectId} = require('mongodb'),
     router = require('../../router'),
     w = require('../../words'),
     co = require('../../constants'),
-    {exportFile, webEvent} = require("../../utilities/commons"),
+    {exportFile, webEvent, getCluster} = require("../../utilities/commons"),
     {genRandomString} = require("../../utilities/hash");
 
 const admin = [
@@ -50,7 +50,7 @@ function iterate(c, cursor, documents, page, items) {
         cursor.sort({[w.mongoId]: -1}).skip((page - 1) * items).limit(items * 1).forEach((doc) => {
             if (doc) {
                 doc[w.timestamp] = ObjectId(doc[w.mongoId])['getTimestamp']();
-                doc[w.cluster] = c;
+                doc[w.cluster + w.id] = getCluster(doc[w.mongoId]);
                 documents.push(doc);
             }
         }, (err) => {
