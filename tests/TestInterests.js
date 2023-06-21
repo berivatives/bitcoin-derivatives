@@ -20,7 +20,8 @@ let data, session, user, session2, user2;
     ({data} = await httpGet('/signup' + query({email, password})));
     session = data;
     user = await redis[w.minus + 0].getAsync("session" + session);
-    await redis[user[0]].hincrbyAsync(user, w.free, 1e8, w.fundingFree, 9e8);
+    const [c] = user;
+    await redis[c].hincrbyAsync(user, w.free, 1e8, w.fundingFree, 9e8);
     const lend = await order({q: 9e8, p: 0.05 * 1e8, s: 'BTC', a: 's', e: w.GTC}, session);
     await order({q: 5e8, p: 1e8, s: 'BLX', a: 'b', e: w.GTC}, session);
     await order({q: 5e8, p: 1e8, s: 'ETH', a: 's', e: w.GTC}, session);
@@ -39,14 +40,14 @@ let data, session, user, session2, user2;
     await wait(100);
     await BTCSize(user, 2);
 
-    while (!user2 || user2[0] !== user[0]) [session2, user2] = await createUser();
+    while (user2?.[0] !== c) [session2, user2] = await createUser();
 
-    await redis[user[0]]["copyAsync"](user, user2);
-    await redis[user[0]]["copyAsync"](user + w.borrowed, user2 + w.borrowed);
+    await redis[c]["copyAsync"](user, user2);
+    await redis[c]["copyAsync"](user + w.borrowed, user2 + w.borrowed);
 
-    const borrowed = JSON.parse(await redis[user[0]].lindexAsync(user + w.borrowed, 0));
+    const borrowed = JSON.parse(await redis[c].lindexAsync(user + w.borrowed, 0));
     borrowed[w.timestamp] = 1;
-    await redis[user[0]].lsetAsync(user + w.borrowed, 0, JSON.stringify(borrowed));
+    await redis[c].lsetAsync(user + w.borrowed, 0, JSON.stringify(borrowed));
     co[w.cluster] = 0;
     require('../services/master/interests');
     await wait(100);
@@ -55,8 +56,8 @@ let data, session, user, session2, user2;
     await openOrdersSize(user, 0);
     strictEqual(await getProp(lendId, w.status, true), w.filled);
     await checkBalance(user, w.free, 0, w.locked, 0, w.margin, 0, w.fundingFree, 9e8 + (1e8 + 1e8) * 0.95); // BLX pnl
-    strictEqual(await redis[user[0]].llenAsync(user + w.balance), 1);
-    strictEqual(JSON.parse(await redis[user[0]].lindexAsync(user + w.balance, 0))[2], 1e8);
+    strictEqual(await redis[c].llenAsync(user + w.balance), 1);
+    strictEqual(JSON.parse(await redis[c].lindexAsync(user + w.balance, 0))[2], 1e8);
     const saved = await mongo[0].collection(w.balance + getCluster(user)).find({id: user}).toArray();
     strictEqual(saved.length, 1);
     strictEqual(saved[0][w.label], "Return Borrowed Bitcoin PNL 5.00000000BLX@1.00000000");

@@ -79,7 +79,6 @@ if (cluster.isMaster) {
 
     init(true);
 
-
 } else {
 
     init();
