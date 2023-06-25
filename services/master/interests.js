@@ -39,6 +39,7 @@ async function checkBorrowers(c) {
             balance[i][w.label] = "Return Borrowed Bitcoin " + balance[i][w.label];
             mongo[c].collection(w.balance + getCluster(id)).insertOne(balance[i]);
         }
+        // TODO add a balance message to inform that they were not enough funds to pay the interests
     }, function (err) {
     });
 }
