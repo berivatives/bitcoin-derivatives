@@ -3,6 +3,7 @@ const {ObjectId} = require('mongodb'),
     mongo = require('../../mongo'),
     redis = require('../../redis'),
     w = require('../../words'),
+    co = require('../../constants'),
     router = require('../../router'),
     {getCluster, getRights, webEvent, validateEmail} = require('../../utilities/commons'),
     {getSessionCookie, isConnected} = require('../../utilities/checkClient'),
@@ -89,7 +90,7 @@ router['signin'] = async (id, c, json, callback, args) => {
     isRestCall(args);
     const {ip} = args;
     await takeLockAsync(getCluster(ip) + ip);
-    let {email, password, token} = json;
+    let {email, password, token, redirect} = json;
     if (!email) throw w.INVALID_EMAIL;
     email = email.toLowerCase();
     const user = await mongo[getCluster(email)].collection(w.users).findOne({email});
@@ -102,7 +103,7 @@ router['signin'] = async (id, c, json, callback, args) => {
         window: 2
     })) throw w.BAD_TOKEN;
     if (user[w.subAccount] && user[w.disabled]) throw w.DISABLED_SUBACCOUNT;
-    await generateCookie(user[w.mongoId], user[w.cluster], callback, args);
+    await generateCookie(user[w.mongoId], user[w.cluster], callback, args, redirect);
 };
 
 router['logout'] = async (id, c, json, callback, args) => {
@@ -120,11 +121,12 @@ function isRestCall(args) {
     if (!args.res || restricted.includes(args.req.country)) throw w.IMPOSSIBLE_OPERATION;
 }
 
-async function generateCookie(id, c, callback, args) {
+async function generateCookie(id, c, callback, args, redirect) {
     const session = c + genRandomString(128);
     await redis[w.minus + c][w.setAsync]("session" + session, "" + id);
     args.res[w.headerWritten] = {
         "Set-Cookie": "session=" + session + "; HttpOnly; path=/; SameSite=Strict; Secure;"
     };
+    if (redirect) args.res[w.headerWritten]["Refresh"] = "0; url=" + (!co.isDev ? "/" : "http://localhost:3000/") + redirect;
     callback(false, session);
 }
