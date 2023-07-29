@@ -93,7 +93,7 @@ async function addDeposit(txId) {
             const {address, amount, category, abandoned} = details[i];
             const [id, c] = map[address];
 
-            if (!id || !c || amount < 0 || category !== 'receive' || abandoned) {
+            if (amount < 0 || category !== 'receive' || abandoned) {
                 delete unconfirmedTransactions[txId];
                 continue;
             }
@@ -104,6 +104,12 @@ async function addDeposit(txId) {
                     return;
                 }
                 unconfirmedTransactions[txId] = true;
+                continue;
+            }
+
+            if (!id || !c) { // it's a swap
+
+                delete unconfirmedTransactions[txId];
                 continue;
             }
 
