@@ -93,7 +93,7 @@ async function addDeposit(txId) {
             const {address, amount, category, abandoned} = details[i];
             const [id, c] = map[address];
 
-            if (!id || !c || amount < 0 || category !== 'receive' || abandoned) {
+            if (!id || amount < 0 || category !== 'receive' || abandoned) {
                 delete unconfirmedTransactions[txId];
                 continue;
             }
