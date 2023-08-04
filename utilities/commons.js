@@ -133,9 +133,20 @@ const prepareExport = function (req, res, fileName, extension, origin) {
 };
 exports.prepareExport = prepareExport;
 
-exports.exportFile = function (req, res, fileId, fileName, origin, callback) {
+const buildBuffer = (stream) => new Promise((resolve) => {
+    const chunks = [];
+    stream.on('data', (chunk) => chunks.push(chunk));
+    stream.on('end', () => resolve(Buffer.concat(chunks)));
+    stream.end();
+});
+
+exports.exportFile = async function (req, res, fileId, fileName, origin, callback, stream) {
     prepareExport(req, res, fileName, fileName.substring(fileName.indexOf('.')), origin);
-    download(res, decryptFile(fs.readFileSync(co.__dirname + '/upload/' + fileId), fileId), callback);
+    download(
+        res,
+        decryptFile(stream ? await buildBuffer(stream) : fs.readFileSync(co.__dirname + '/upload/' + fileId), fileId),
+        callback
+    );
 };
 
 exports.webEvent = function (msg, id, c) {

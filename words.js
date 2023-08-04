@@ -296,4 +296,5 @@ module.exports = {
     referral: 'ref',
     referralFree: 'refFree',
     reboot: 'reboot',
+    bucket: 'bucket',
 };

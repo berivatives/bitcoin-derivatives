@@ -34,6 +34,7 @@ map.machines = [
 ];
 
 map.mongoRs = false;
+map.gridfs = true;
 
 map.uploadPassword = "dev";
 map.maxSize = 1024 * 1024 * 10;

@@ -1,4 +1,4 @@
-const {MongoClient} = require('mongodb'),
+const {MongoClient, GridFSBucket} = require('mongodb'),
     cluster = require('cluster'),
     co = require('./constants'),
     w = require('./words'),
@@ -8,6 +8,7 @@ const {MongoClient} = require('mongodb'),
     for (let i in co.mongoClusters) {
         if (co.mongoClusters[i].length === 1) {
             db[i] = db[co.mongoClusters[i]];
+            db[w.bucket + i] = db[w.bucket + co.mongoClusters[i]];
             continue;
         }
         const client = await MongoClient.connect(co.mongoClusters[i], {
@@ -16,6 +17,7 @@ const {MongoClient} = require('mongodb'),
             serverSelectionTimeoutMS: 5000
         }).catch(() => process.exit(0));
         db[i] = await client.db(co.dbName);
+        db[w.bucket + i] = new GridFSBucket(db[i]);
         if (cluster.isMaster) {
             await checkIndex(db[i], w.users, w.email, i);
             await checkIndex(db[i], w.deposits, w.data, i);

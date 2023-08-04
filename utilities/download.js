@@ -12,7 +12,7 @@ function toArrayBuffer(buffer) {
 function onAbortedOrFinishedResponse(res, readStream, callback) {
     if (res.id !== -1) {
         readStream.destroy();
-        callback && callback();
+        callback?.();
     }
     res.id = -1;
 }

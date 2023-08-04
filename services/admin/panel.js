@@ -87,7 +87,15 @@ async function getFile(json, callback, args) {
     const {f, id, c} = json;
     const file = await mongo[c || 0].collection(w.verification).findOne({id});
     if (!file) throw w.IMPOSSIBLE_OPERATION;
-    exportFile(args.req, args.res, f, file[w.verification][f][0], args.origin, callback);
+    await exportFile(
+        args.req,
+        args.res,
+        f,
+        file[w.verification][f][0],
+        args.origin,
+        callback,
+        co.gridfs && f.length === 24 ? mongo[w.bucket + c].openDownloadStream(f) : undefined
+    );
 }
 
 async function verifyAccount(json, callback) {
