@@ -1,8 +1,8 @@
-# **Back of berivatives.com - an open source Bitcoin derivatives exchange**
+# **Back-end of berivatives.com - an open source Bitcoin derivatives exchange**
 
 **To start a dev server**
 
-_Start 3 redis instances at port 6379, 6380 & 6381_
+_Install &  start 3 redis instances from this fork https://github.com/berivatives/redis at port 6379, 6380 & 6381_
 
 `redis-server --save "" --appendonly no`
 
@@ -14,7 +14,7 @@ _Start a mongodb instance at port 27017_
 
 `mongod --dbpath /tmp --port 27017`
 
-_Start a bitcoind daemon instance use proxy arg to block the blockchain download_
+_Start a bitcoin daemon instance using proxy arg to block the blockchain download_
 
 `bitcoind -proxy=127.0.0.1:15000 -rpcuser=dev -rpcpassword=dev -fallbackfee=0`
 
