@@ -78,6 +78,7 @@ async function login(json, callback, args) {
     const session = c + genRandomString(128);
     await redis[w.minus + c].setAsync("session" + session, id);
     args.res[w.headerWritten] = {
+        "Set-Cookie": "session=" + session + "; HttpOnly; path=/; SameSite=Strict; Secure;",
         "Refresh": "0; url=" + (!co.isDev ? "/" : "http://localhost:3000") + "?email=" + user[w.email] + "&session=" + session
     };
     callback(false);
