@@ -98,7 +98,8 @@ if (cluster.isMaster) {
 
     function sendFile(res, fileName) {
         if (!router[w.files][fileName] || fileName === w.loadFiles) {
-            res.writeStatus('404 Not Found').end(router[w.files]["404.html"]);
+            const file = router[w.files]["404.html"];
+            res.writeStatus('404 Not Found').end(co.cache ? file : file());
         } else {
             res.writeStatus('200 OK').writeHeader("Content-Type", co[w.extensions][path.extname(fileName)]);
             download(res, co.cache ? router[w.files][fileName] : router[w.files][fileName]());
