@@ -82,9 +82,6 @@ module.exports = async function matching(params) {
                 // case auto liquidation
                 isAutoLiquidation(accounts[takerId], tempPosition, realPrice, isFunding, sell);
 
-                // case wash trading
-                if (takerId === makerId && !isFunding) throw w.WASH_TRADING_FORBIDDEN;
-
                 initCluster(makerCluster, commands, individuals, balances, orders);
 
                 individuals[makerCluster][0].push([makerId, maker[w.orderId], makerCluster]);
@@ -107,6 +104,9 @@ module.exports = async function matching(params) {
                     isHidden(maker, orderBookUpdates, realPrice, maker[w.quantity], sell);
                     continue;
                 }
+
+                // case wash trading
+                if (takerId === makerId && !isFunding) throw w.WASH_TRADING_FORBIDDEN;
 
                 security[0][1] *= 1;
                 security[0][2] *= 1;
