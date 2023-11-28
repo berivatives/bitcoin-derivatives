@@ -133,7 +133,7 @@ exports.save = async function (individuals, orders, orderBookUpdates, trades, sy
         });
 
         if (!reply) {
-            fs.appendFileSync(co.__dirname + + "/errors/" + now + ".json", JSON.stringify({
+            fs.appendFileSync(co.__dirname + "/errors/" + now + ".json", JSON.stringify({
                 c,
                 mergedCommands,
                 balances: balances[c]

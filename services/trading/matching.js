@@ -168,7 +168,7 @@ module.exports = async function matching(params) {
                             commands[makerCluster].push([w.hincrby, makerId + maker[w.orderId], w.counterPart, maker[w.counterPart] * -1]);
                             maker[w.counterPart] = 0;
                         }
-                        if (!hasEnoughFunds(makerId, accounts[makerId], commands[makerCluster], temp, 0, 0)) {
+                        if (!hasEnoughFunds(makerId, accounts[makerId], commands[makerCluster], temp)) {
                             maker[w.counterPart] = security[0][3];
                             reduce(commands, maker, orderBookUpdates, orders[makerCluster], realPrice, sell);
                             continue;

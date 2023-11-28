@@ -39,8 +39,10 @@ const mustReturnBitcoin = function (id, c, account, BTCList) {
     initAccount(account, false, false, null, Date.now(), c);
     if (account[w.exposure] < account[w.BTC][w.quantity]) {
         account[w.toReturn] = account[w.BTC][w.quantity] - account[w.exposure];
-        returnBTC(account, id, c, true);
+    } else if (account[w.leverage] < 1) {
+        account[w.toReturn] = account[w.BTC][w.quantity];
     }
+    account[w.toReturn] && returnBTC(account, id, c, true);
     return account;
 };
 

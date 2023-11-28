@@ -18,7 +18,7 @@ const {publish, wait} = require("../utilities/commons");
 
 let error, data;
 const orders = [], users = [], s = 'ETH', e = w.GTC;
-let session, user, session2;
+let session, user, session2, user2;
 
 (async () => {
 
@@ -525,6 +525,21 @@ let session, user, session2;
         await openOrdersSize(user, 1);
     }
     /****increase a leveraged position at a price below entry price****/
+
+
+    /****do not borrow funds if not needed****/
+    await clearCache();
+    [session, user] = await createUser([w.free, 1e8, w.fundingFree, 4e8]);
+    ({error} = await order({q: 4e8, p: 0.05 * 1e8, s: 'BTC', a: 's', e: w.GTC}, session));
+    strictEqual(error, false);
+    ({error} = await order({q: 1e8, p: 1e8, s: 'ETH', a: 's', e: w.GTC}, session));
+    strictEqual(error, false);
+    [session2, user2] = await createUser([w.free, 0, w.locked, 19388773, w.margin, 106145747]);
+    ({error, data} = await order({q: 1e8 * 0.1, p: 1e8, s: 'ETH', a: 'b', e: w.GTC}, session2));
+    strictEqual(error, false);
+    await wait(500);
+    await BTCSize(user2, 0);
+    /****do not borrow funds if not needed****/
 
 
     process.exit(0);
