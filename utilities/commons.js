@@ -41,6 +41,9 @@ exports.hasEnoughFunds = function (id, account, commands, amount, maxToBorrow, P
                 commands.push([w.hincrby, id, w.free, Math.round(account[w.free] * -1), w.locked, Math.round(account[w.free])]);
                 account[w.free] = 0;
             }
+            if (maxToBorrow === undefined && PNL === undefined && amount > 0 && account[w.exposure] < account[w.free] + account[w.locked]) {
+                amount -= (account[w.free] + account[w.locked] - account[w.exposure]);
+            }
             if (amount > 0) {
                 account[w.margin] += amount;
                 commands.push([w.hincrby, id, w.margin, Math.round(amount)]);

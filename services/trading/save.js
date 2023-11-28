@@ -155,7 +155,6 @@ exports.save = async function (individuals, orders, orderBookUpdates, trades, sy
         for (let i in balances[c]) {
             const balance = balances[c][i];
             mongo[c].collection(w.balance + getCluster(balance[w.id])).insertOne(balance);
-
         }
 
         for (let i = commandsLength; i < reply.length; i++) {
@@ -170,7 +169,6 @@ exports.save = async function (individuals, orders, orderBookUpdates, trades, sy
 
     if (!isFunding) {
         for (let id in accounts) {
-
             if (accounts[id][w.free] > 0 && accounts[id][w.toBorrow] > 0) {
                 if (accounts[id][w.free] > accounts[id][w.toBorrow]) {
                     accounts[id][w.toBorrow] = 0;
@@ -178,7 +176,6 @@ exports.save = async function (individuals, orders, orderBookUpdates, trades, sy
                     accounts[id][w.toBorrow] -= accounts[id][w.free];
                 }
             }
-
             if (accounts[id][w.toBorrow] > 0 && accounts[id][w.toReturn] > 0) {
                 if (accounts[id][w.toBorrow] > accounts[id][w.toReturn]) {
                     accounts[id][w.toBorrow] -= accounts[id][w.toReturn];
@@ -188,7 +185,6 @@ exports.save = async function (individuals, orders, orderBookUpdates, trades, sy
                     accounts[id][w.toBorrow] = 0;
                 }
             }
-
             if (accounts[id][w.toBorrow] > 0) {
                 accounts[id][w.id] = id;
                 borrowBitcoin(accounts[id]);

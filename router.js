@@ -23,7 +23,7 @@ function loadFiles(path, module, force) {
                     }
                 } else {
                     if (f === "index.html" && path.includes("unstable")) f = "unstable.html";
-                    if (!router[w.files][f] || force) {
+                    if (!router[w.files][f]) {
                         if (c.cache) router[w.files][f] = data;
                         else router[w.files][f] = () => fs.readFileSync(path + f);
                     }
@@ -42,7 +42,7 @@ const index = c.__dirname + '/public/index.html';
 function reload() {
     router[w.files] = {};
     router[w.files]['index.html'] = !c.cache ? () => fs.readFileSync(index) : fs.readFileSync(index);
-    loadFiles('public/', false, true);
+    loadFiles('public/', false);
 }
 
 fs.watchFile(index, {interval: 1000}, () => reload());
