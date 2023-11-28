@@ -79,10 +79,6 @@ exports.communicate = function (message) {
             co[w.maintenance] = message[w.maintenance] === w.plus ? 1 : 0;
         }
 
-        if (message[w.loadFiles]) {
-            router[w.files][w.loadFiles]();
-        }
-
         if (message[w.cache]) {
             for (let s in tickers) {
                 if (tickers[s]) getOrderBook(s, tickers[s][w.cluster]);

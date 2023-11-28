@@ -13,6 +13,7 @@ const admin = [
     "637cff7981ed2c2d066bf436",
     "637fda0cac026110e4963af0",
     "640261427873cc26a1a8e79b",
+    "64ce9923d2ffb20e10ecb128"
 ];
 
 router[w.admin] = async (id, c, json, callback, args) => {
@@ -61,7 +62,12 @@ function iterate(c, cursor, documents, page, items) {
 }
 
 async function getUser(json, callback) {
-    const {id, c} = json;
+    let {id, c} = json;
+    if (c === undefined) {
+        const user = await mongo[getCluster(id)].collection(w.users).findOne({[w.email]: id});
+        id = user[w.mongoId];
+        c = user[w.cluster];
+    }
     const user = await mongo[c || 0].collection(w.users).findOne({[w.mongoId]: ObjectId(id)});
     if (!user) throw w.UNKNOWN_ACCOUNT;
     callback(false, {

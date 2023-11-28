@@ -55,7 +55,7 @@ let data, session, user, session2, user2;
     const lendId = user + lend.data.id;
     await openOrdersSize(user, 0);
     strictEqual(await getProp(lendId, w.status, true), w.filled);
-    await checkBalance(user, w.free, 0, w.locked, 0, w.margin, 0, w.fundingFree, 9e8 + (1e8 + 1e8) * 0.95); // BLX pnl
+    await checkBalance(user, w.free, 0, w.locked, 0, w.margin, 0, w.fundingFree, 9e8 + (1e8 + 1e8) * 0.95); // BTC pnl
     strictEqual(await redis[c].llenAsync(user + w.balance), 1);
     strictEqual(JSON.parse(await redis[c].lindexAsync(user + w.balance, 0))[2], 1e8);
     const saved = await mongo[0].collection(w.balance + getCluster(user)).find({id: user}).toArray();

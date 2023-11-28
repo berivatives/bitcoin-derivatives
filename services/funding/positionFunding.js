@@ -169,9 +169,7 @@ async function returnBTC(account, id, c, timeBug) {
 
     if (timeBug) commands.push([w.lpop, id + w.errorBTC]);
 
-    await redis[c].multi(commands).execAsync().catch(e => {
-        console.log(e);
-    });
+    await redis[c].multi(commands).execAsync().catch(e => console.log(e));
     releaseLock(c + id + w.funding);
 }
 

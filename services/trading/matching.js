@@ -106,7 +106,10 @@ module.exports = async function matching(params) {
                 }
 
                 // case wash trading
-                if (takerId === makerId && !isFunding) throw w.WASH_TRADING_FORBIDDEN;
+                if (takerId === makerId && !isFunding) {
+                    releaseLock(c + takerId + (args[w.borrow] ? w.borrow : ""));
+                    throw w.WASH_TRADING_FORBIDDEN;
+                }
 
                 security[0][1] *= 1;
                 security[0][2] *= 1;

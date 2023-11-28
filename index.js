@@ -97,7 +97,7 @@ if (cluster.isMaster) {
     });
 
     function sendFile(res, fileName) {
-        if (!router[w.files][fileName] || fileName === w.loadFiles) {
+        if (!router[w.files][fileName]) {
             const file = router[w.files]["404.html"];
             res.writeStatus('404 Not Found').end(co.cache ? file : file());
         } else {

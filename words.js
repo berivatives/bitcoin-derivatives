@@ -289,7 +289,6 @@ module.exports = {
     disabled: 'disabled',
     maintenance: 'maintenance',
     files: 'files',
-    loadFiles: 'loadFiles',
     cache: 'cache',
     verification: 've',
     pgp: 'pgp',

@@ -36,5 +36,14 @@ function loadFiles(path, module, force) {
 }
 
 loadFiles('services/', true);
-router[w.files][w.loadFiles] = () => loadFiles('public/', false, true);
-router[w.files][w.loadFiles]();
+
+const index = c.__dirname + '/public/index.html';
+
+function reload() {
+    router[w.files] = {};
+    router[w.files]['index.html'] = !c.cache ? () => fs.readFileSync(index) : fs.readFileSync(index);
+    loadFiles('public/', false, true);
+}
+
+fs.watchFile(index, {interval: 1000}, () => reload());
+reload();
