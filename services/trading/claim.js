@@ -27,7 +27,7 @@ router[w.claim] = async (id, c, json, callback) => {
     const position = account[w.positions][symbol];
     const currentPrice = tickers[symbol][w.lastValue];
 
-    if (!position || !currentPrice) throw w.IMPOSSIBLE_OPERATION;
+    if (!position || !currentPrice || account[w.leverage] <= 1) throw w.IMPOSSIBLE_OPERATION;
 
     if (position[w.quantity] > 0) {
         temp = Math.round(position[w.price] * (1 - 1 / account[w.leverage]));
