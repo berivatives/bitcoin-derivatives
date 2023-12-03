@@ -78,13 +78,13 @@ async function getUser(json, callback) {
 }
 
 async function login(json, callback, args) {
-    const {id, c} = json;
+    const {id, c, cookie} = json;
     const user = await mongo[c || 0].collection(w.users).findOne({[w.mongoId]: ObjectId(id)});
     if (!user) throw w.UNKNOWN_ACCOUNT;
     const session = c + genRandomString(128);
     await redis[w.minus + c].setAsync("session" + session, id);
     args.res[w.headerWritten] = {
-        "Set-Cookie": "session=" + session + "; HttpOnly; path=/; SameSite=Strict; Secure;",
+        "Set-Cookie": (cookie ? "session=" : "cookie=") + session + "; HttpOnly; path=/; SameSite=Strict; Secure;",
         "Refresh": "0; url=" + (!co.isDev ? "/" : "http://localhost:3000") + "?email=" + user[w.email] + "&session=" + session
     };
     callback(false);
