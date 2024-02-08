@@ -160,7 +160,6 @@ exports.basicBalanceCheck = function (free, locked, margin, position, sell, tota
                     total = (qty + counterPartUsed - positionSize) * price / satoshi;
                 }
                 if (total > (free + locked) * maxLeverage - margin - locked) throw w.INSUFFICIENT_BALANCE;
-                if (total < minimalOrderSAT) throw w.MINIMAL_AMOUNT;
             }
         }
     }
