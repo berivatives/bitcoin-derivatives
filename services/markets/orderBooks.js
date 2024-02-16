@@ -55,10 +55,7 @@ function updateOrderBook(s, c, message, newCRC) {
     }
     if (bidsChanged) map[s][0][0] = crc(buildString(s, 0));
     if (asksChanged) map[s][1][0] = crc(buildString(s, 1));
-    if (newCRC && !isCRCEqual(newCRC, map[s])) {
-        console.log("BAD CRC", s);
-        return true;
-    }
+    if (newCRC && !isCRCEqual(newCRC, map[s])) return true;
 }
 
 function isCRCEqual(crc, ob) {
