@@ -125,5 +125,5 @@ router['c-' + w.withdraw] = async (id, c, json, callback) => {
         to: email, subject: "Withdraw request", pgp,
         html: '<p>Hello,<br/><br/>Your token to withdraw is: <b>' + token + '</b></p>'
     }));
-    callback(false, w.EMAIL_SENT);
+    callback(false, w.EMAIL_SENT_CHECK_YOUR_SPAMS);
 };
