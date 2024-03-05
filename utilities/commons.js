@@ -168,7 +168,7 @@ exports.saveOrder = function (id, c, order, internal) {
     order[w.mongoId] = ObjectId(order[w.id]);
     order[w.id] = id;
     if (internal) order[w.myId] = "internal";
-    mongo[c].collection(w.orders + getCluster(id)).insertOne(order);
+    mongo[c].collection(w.orders + getCluster(id)).insertOne(order).catch(e => console.log(e, id, JSON.stringify(order)));
 };
 
 exports.isBan = async function (ip) {

@@ -3,7 +3,7 @@ const {strictEqual} = require('assert'),
     {osCommand} = require("../utilities/commons");
 
 async function tests() {
-    const files = fs.readdirSync("../tests").filter(f => f.startsWith("Test") && f.endsWith(".js"));
+    const files = fs.readdirSync("../tests").filter(f => f.endsWith(".test.js"));
     for (const file of files) {
         const content = fs.readFileSync("../tests/" + file).toString();
         if (content.indexOf('process') !== content.lastIndexOf('process')) {
