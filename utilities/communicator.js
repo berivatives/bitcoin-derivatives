@@ -5,7 +5,6 @@ const cluster = require('cluster'),
     redis = require('../redis'),
     co = require('../constants'),
     w = require('../words'),
-    router = require('../router'),
     {channels, initChannels} = require("../services/markets/channels"),
     {getOrderBook, updateOrderBook} = require("../services/markets/orderBooks");
 

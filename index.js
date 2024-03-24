@@ -92,9 +92,7 @@ if (cluster.isMaster) {
         WebSocketMarket = require('./WebSocketMarket'),
         WebSocketAccount = require('./WebSocketAccount');
 
-    process.on('message', function (msg) {
-        communicate(msg);
-    });
+    process.on('message', (msg) => communicate(msg));
 
     function sendFile(res, fileName) {
         if (!router[w.files][fileName]) {
