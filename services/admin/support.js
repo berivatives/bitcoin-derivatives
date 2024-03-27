@@ -11,6 +11,6 @@ router['error'] = async (id, c, json, callback, args) => {
     const {error, stack} = json;
     if (!error || !stack) throw w.IMPOSSIBLE_OPERATION;
     await takeLockAsync(getCluster(ip) + ip);
-    await mongo[getCluster(error)].collection(w.error).insertOne({error, stack});
+    await mongo[getCluster(error)].collection(w.error).insertOne({error, stack, country: args.req.country});
     callback(false);
 };
