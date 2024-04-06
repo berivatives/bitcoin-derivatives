@@ -45,6 +45,7 @@ router['signup'] = async (id, c, json, callback, args) => {
         c,
         email,
         ip,
+        country: args.req.country,
         ...saltHashPassword("" + password)
     };
 
