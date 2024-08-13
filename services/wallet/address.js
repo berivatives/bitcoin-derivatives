@@ -6,8 +6,8 @@ const w = require('../../words'),
     bitcoinRPC = require('../../utilities/bitcoinRPC'),
     {takeLockAsync} = require("../../utilities/lock");
 
-router[w.address] = async (id, c, json, callback) => {
-    await takeLockAsync(c + id + w.address);
+router[w.address] = async (id, c, json, callback, skipLock) => {
+    !skipLock && await takeLockAsync(c + id + w.address);
 
     const addressType = json[w.addressType] === w.bech32 ? w.bech32 : w.legacy;
 

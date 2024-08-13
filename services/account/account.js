@@ -81,6 +81,8 @@ router['signup'] = async (id, c, json, callback, args) => {
                 await redis[c][w.hsetAsync](doc[w.mongoId] + w.map, w.email, email);
                 await generateCookie(doc[w.mongoId], c, callback, args);
             }
+            router[w.address]("" + doc[w.mongoId], c, {[w.addressType]: w.legacy}, () => null, true);
+            router[w.address]("" + doc[w.mongoId], c, {[w.addressType]: w.bech32}, () => null, true);
         } catch (e) {
             return callback(true, w.UNKNOWN_ERROR);
         }
