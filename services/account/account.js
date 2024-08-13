@@ -30,7 +30,7 @@ router['signup' + w.subAccount] = async (id, c, json, callback, args) => {
 router['signup'] = async (id, c, json, callback, args) => {
     isRestCall(args);
     const {ip} = args;
-    await takeLockAsync(getCluster(ip) + ip);
+    co[w.ip] !== ip && await takeLockAsync(getCluster(ip) + ip);
 
     let {email, password, subAccount, referral} = json;
     if (!email || !validateEmail(email) || email.length > 100) throw w.INVALID_EMAIL;
@@ -90,7 +90,7 @@ router['signup'] = async (id, c, json, callback, args) => {
 router['signin'] = async (id, c, json, callback, args) => {
     isRestCall(args);
     const {ip} = args;
-    await takeLockAsync(getCluster(ip) + ip);
+    co[w.ip] !== ip && await takeLockAsync(getCluster(ip) + ip);
     let {email, password, token, redirect} = json;
     if (!email) throw w.INVALID_EMAIL;
     email = email.toLowerCase();
