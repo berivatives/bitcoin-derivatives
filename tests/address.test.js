@@ -24,6 +24,10 @@ let error, data, legacy, bech32;
     strictEqual(data[w.addressUsed + w.legacy], '0');
     strictEqual((await mongo[user[0]].collection(w.addresses).find({ad: legacy}).toArray()).length, 1);
 
+    ({error, data} = await httpGet('/' + w.sign + query({[w.label]: "toast"}), session));
+    strictEqual(error, false);
+    strictEqual(data.length, 88);
+
     ({error, data} = await httpGet('/ad' + query({[w.addressType]: w.bech32}), session));
     await clearLock(user + w.address, user[0]);
     strictEqual(error, false, data);

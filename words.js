@@ -66,6 +66,7 @@ module.exports = {
     legacy: 'legacy',
     api: 'api',
     address: 'ad',
+    sign: 'sign',
     addressType: 't',
     transfer: 't',
     withdraw: 'w',

@@ -30,3 +30,11 @@ router[w.address] = async (id, c, json, callback, skipLock) => {
 
     callback(false, ad);
 };
+
+router[w.sign] = async (id, c, json, callback) => {
+    await takeLockAsync(c + id + w.sign);
+    const legacy = await redis[c][w.hgetAsync](id + w.map, w.legacy);
+    const {result, code} = await bitcoinRPC('signmessage', [legacy, json[w.label]]);
+    if (code) throw w.UNKNOWN_ERROR;
+    callback(false, result);
+};
