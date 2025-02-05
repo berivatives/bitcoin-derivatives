@@ -105,12 +105,6 @@ module.exports = async function matching(params) {
                     continue;
                 }
 
-                // case wash trading
-                if (takerId === makerId && !isFunding) {
-                    releaseLock(c + takerId + (args[w.borrow] ? w.borrow : ""));
-                    throw w.WASH_TRADING_FORBIDDEN;
-                }
-
                 security[0][1] *= 1;
                 security[0][2] *= 1;
                 security[0][3] *= 1;
@@ -143,6 +137,12 @@ module.exports = async function matching(params) {
                         reduce(commands, maker, orderBookUpdates, orders[makerCluster], realPrice, sell);
                         continue;
                     }
+                }
+
+                // self-trade prevention - expire maker
+                if (takerId === makerId && !isFunding) {
+                    reduce(commands, maker, orderBookUpdates, orders[makerCluster], realPrice, sell, isFunding ? w.cancelled : w.marginCancelled);
+                    continue;
                 }
 
                 // case auto liquidation maker

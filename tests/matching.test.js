@@ -103,14 +103,15 @@ let session, user, session2, user2;
     /*******case auto liquidation******/
 
 
-    /*******case wash trading******/
+    /*******case self-trade prevention******/
     await reset();
     user = await createUser([w.free, 1e8], users);
     await order({q: 1e8, p: 1e8, s, a: 'b', e}, user);
-    ({error, data} = await order({q: 1e8, p: 1e8, s, a: 's', e}, user));
-    strictEqual(error, true);
-    strictEqual(data, w.WASH_TRADING_FORBIDDEN);
-    /*******case wash trading******/
+    ({error} = await order({q: 1e8, p: 1e8, s, a: 's', e}, user));
+    strictEqual(error, false);
+    await orderBookSize(s + w.asks, 1);
+    await orderBookSize(s + w.bids, 0);
+    /*******case self-trade prevention******/
 
 
     /*******case order not opened******/
