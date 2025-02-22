@@ -9,7 +9,7 @@ const w = require('../../words'),
 router[w.address] = async (id, c, json, callback, skipLock) => {
     !skipLock && await takeLockAsync(c + id + w.address);
 
-    const addressType = json[w.addressType] === w.bech32 ? w.bech32 : w.legacy;
+    const addressType = w.legacy;
 
     const depositCounter = await redis[c][w.hgetAsync](id + w.map, w.addressUsed + addressType);
     const [subAccount, right] = await redis[c][w.hmgetAsync](id, w.subAccount, w.right);

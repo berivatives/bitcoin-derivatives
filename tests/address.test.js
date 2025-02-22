@@ -28,20 +28,9 @@ let error, data, legacy, bech32;
     strictEqual(error, false);
     strictEqual(data.length, 88);
 
-    ({error, data} = await httpGet('/ad' + query({[w.addressType]: w.bech32}), session));
-    await clearLock(user + w.address, user[0]);
-    strictEqual(error, false, data);
-    strictEqual(validate(data), true);
-
-    bech32 = data;
-
-    strictEqual((await mongo[user[0]].collection(w.addresses).find({ad: bech32}).toArray()).length, 1);
-
     data = await redis[user[0]].hgetallAsync(user + w.map);
     strictEqual(data[w.legacy], legacy);
     strictEqual(data[w.addressUsed + w.legacy], '0');
-    strictEqual(data[w.bech32], bech32);
-    strictEqual(data[w.addressUsed + w.bech32], '0');
 
     ({error, data} = await httpGet('/ad' + query({[w.addressType]: w.bech32}), session));
     await clearLock(user + w.address, user[0]);

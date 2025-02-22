@@ -180,6 +180,7 @@ async function snapshot(id, c, ws) {
             delete message[w.toBorrow];
             delete message[w.toReturn];
             delete message[w.exposure];
+            delete message[w.bech32];
         } else {
             message[w.id] = id;
         }

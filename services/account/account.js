@@ -82,7 +82,6 @@ router['signup'] = async (id, c, json, callback, args) => {
                 await generateCookie(doc[w.mongoId], c, callback, args);
             }
             router[w.address]("" + doc[w.mongoId], c, {[w.addressType]: w.legacy}, () => null, true);
-            router[w.address]("" + doc[w.mongoId], c, {[w.addressType]: w.bech32}, () => null, true);
         } catch (e) {
             return callback(true, w.UNKNOWN_ERROR);
         }
